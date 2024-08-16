@@ -3,22 +3,23 @@ package petstore;
 import base_urls.PetStoreBaseUrl;
 import io.restassured.response.Response;
 import org.testng.annotations.Test;
+import pojos.PetPojo;
 import utilities.ObjectMapperUtils;
 
 import java.util.List;
 import java.util.Map;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItems;
-import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.Assert.assertEquals;
 
-public class C02_CreatepetMap extends PetStoreBaseUrl {
+public class C03_CreatePetPojo extends PetStoreBaseUrl {
+
     /*
     Given
-    https://petstore.swagger.io/v2/pet
+        https://petstore.swagger.io/v2/pet
     And
-     "id": 6464,
+        {
+              "id": 56793,
               "category": {
                 "id": 0,
                 "name": "Kedi"
@@ -43,14 +44,16 @@ public class C02_CreatepetMap extends PetStoreBaseUrl {
 
               ],
               "status": "available"
-            }'
+            }
+
        When
-       User send POST request
+            User send POST request
        Then
-       Status code should be 200
+            Status code should be 200
        And
-       Response body should be like:
-        "id": 6464,
+            Response body should be like:
+             {
+              "id": 56793,
               "category": {
                 "id": 0,
                 "name": "Kedi"
@@ -75,18 +78,20 @@ public class C02_CreatepetMap extends PetStoreBaseUrl {
 
               ],
               "status": "available"
-            }'
+            }
      */
 
+    public static Integer petId;
+    public static PetPojo expectedData;//Başka classlarda da kullanabilirim.
     @Test
-    void creatPetTest(){
-        //Set the Url
-        spec.pathParam("first","pet");
+    void createPetTest() {
+        //Set the url
+        spec.pathParams("first", "pet");
 
         //Set the expected data
         String strExpectedData = """
                         {
-                              "id": 6464,
+                              "id": 56793,
                               "category": {
                                 "id": 0,
                                 "name": "Kedi"
@@ -114,31 +119,31 @@ public class C02_CreatepetMap extends PetStoreBaseUrl {
                             }
                 """;
 
-        Map expectedData = ObjectMapperUtils.convertJsonStrToJava(strExpectedData, Map.class);
+        expectedData = ObjectMapperUtils.convertJsonStrToJava(strExpectedData, PetPojo.class);
         System.out.println("expectedData = " + expectedData);
 
+
         //Send the request and get the response
-        Response response = given(spec).body(strExpectedData).post("{first}");
+        Response response = given(spec).body(expectedData).post("{first}");
         response.prettyPrint();
 
         //Do assertion
-        Map actualData = ObjectMapperUtils.convertJsonStrToJava(response.asString(), Map.class);
+        PetPojo actualData = ObjectMapperUtils.convertJsonStrToJava(response.asString(), PetPojo.class);
         System.out.println("actualData = " + actualData);
 
-        assertEquals(response.statusCode(),200);
-       assertEquals(actualData.get("id"),expectedData.get("id"));
-       assertEquals( ((Map)actualData.get("category")).get("name"), ((Map)expectedData.get("category")).get("name"));
-       assertEquals(actualData.get("name"),expectedData.get("name"));
-       assertEquals(   ((List)actualData.get("photoUrls")),   ((List) expectedData.get("photoUrls")));
-       assertEquals(  ((Map) ((List)actualData.get("tags")).get(0)).get("name"),  ((Map) ((List) expectedData.get("tags")).get(0)).get("name"));
-       assertEquals(  ((Map) ((List)actualData.get("tags")).get(1)).get("name"),  ((Map) ((List) expectedData.get("tags")).get(1)).get("name"));
-       assertEquals(  ((Map) ((List)actualData.get("tags")).get(2)).get("name"),  ((Map) ((List) expectedData.get("tags")).get(2)).get("name"));
-        assertEquals(actualData.get("status"),expectedData.get("status"));
+        assertEquals(response.statusCode(), 200);
+        assertEquals(actualData.getId(), expectedData.getId());
+        assertEquals(actualData.getCategory().getName(), expectedData.getCategory().getName());
+        assertEquals(actualData.getName(), expectedData.getName());
+        assertEquals(actualData.getPhotoUrls().get(0), expectedData.getPhotoUrls().get(0));
+        assertEquals(actualData.getPhotoUrls().get(1), expectedData.getPhotoUrls().get(1));
+        assertEquals(actualData.getPhotoUrls().get(2), expectedData.getPhotoUrls().get(2));
+        assertEquals(actualData.getTags().get(0).getName(), expectedData.getTags().get(0).getName());
+        assertEquals(actualData.getTags().get(1).getName(), expectedData.getTags().get(1).getName());
+        assertEquals(actualData.getTags().get(2).getName(), expectedData.getTags().get(2).getName());
+        assertEquals(actualData.getStatus(), expectedData.getStatus());
 
-
-
-
+        petId = actualData.getId();
 
     }
-
 }
