@@ -1,5 +1,8 @@
 package pojos.goRestHomework11;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Links{
 	private Object next;
 	private String current;

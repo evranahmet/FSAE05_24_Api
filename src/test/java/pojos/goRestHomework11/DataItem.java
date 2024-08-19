@@ -1,5 +1,9 @@
 package pojos.goRestHomework11;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DataItem{
 	private Integer userId;
 	private Integer id;

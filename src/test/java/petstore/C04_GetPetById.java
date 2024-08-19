@@ -65,8 +65,7 @@ public class C04_GetPetById extends PetStoreBaseUrl {
         //Bir önceki class'ta oluşturulan aynı data
 
         //Send the request and get the response
-        Response response;
-        response = given(spec).get("{first}/{second}");
+        Response response = given(spec).get("{first}/{second}");
         response.prettyPrint();
 
         //Do assertion
